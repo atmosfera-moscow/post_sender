@@ -35,11 +35,11 @@ export default async (group_id, post_type_own, post_link, post_text, actions) =>
               console.log(group_id, 'мод ВСЕ чаты')
               let flag = true
               let chat_id = 2000000001
-              while (flag) {
+              while (flag && chat_id < 2000000101) {
                 if (chat_id !== action.except) {
                   flag = await send_to_chat(post_link, chat_id, action)
-                  chat_id += 1
                 }
+                chat_id += 1
               }
             } else {
               await send_to_chat(post_link, action.to_chat_list, action)

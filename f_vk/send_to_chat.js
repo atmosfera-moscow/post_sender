@@ -35,6 +35,7 @@ export const send_to_chat = async (post_link, chat_id, action) => {
             action.to_group,
             chat_id
           )
+          break
         case 7:
           console.log(
             action.from_group,
@@ -43,6 +44,7 @@ export const send_to_chat = async (post_link, chat_id, action) => {
             action.to_group,
             chat_id
           )
+          break
         case 917:
           console.log(
             action.from_group,
@@ -51,6 +53,7 @@ export const send_to_chat = async (post_link, chat_id, action) => {
             action.to_group,
             chat_id
           )
+          return false
         default:
           console.log(
             action.from_group,
@@ -62,7 +65,7 @@ export const send_to_chat = async (post_link, chat_id, action) => {
             chat_id
           )
       }
-      return false
+      return true
     }
   } catch (e) {
     console.log(action.from_group, 'ошибка в send_to_chat.js', e)
