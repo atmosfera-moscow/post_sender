@@ -26,7 +26,8 @@ app.post('/post_sender', async (req, res) => {
         let post_text = body.object.text
         let post_type_own = body.object.owner_id === body.object.from_id ? 'official' : 'user'
         let post_link = 'wall' + body.object.owner_id + '_' + body.object.id.toString()
-        console.log(group_id, 'Получен пост', post_type_own, post_link, post_text.substring(0, 5))
+        console.log(`${group_id} Получен пост ${post_type_own} ${post_link} ${post_text.slice(0, 10)}`)
+        console.log(JSON.stringify(body))
 
         let actions = await get_actions(group_id, post_type_own)
         await processing(group_id, post_type_own, post_link, post_text, actions)
@@ -39,7 +40,7 @@ app.post('/post_sender', async (req, res) => {
         break
     }
   } catch (e) {
-    console.log('ошибка в app.js', e)
+    console.log(`ошибка в app.js ${e}`)
   }
 })
 
