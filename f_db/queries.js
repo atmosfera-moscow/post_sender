@@ -1,19 +1,19 @@
 import { makeDBRequest } from './dbConnection.js'
 
-export const add_history = async (group_id, post_link, to_chat_list, to_group, action_type) => {
+export const add_history = async (group_id, post_link, to_chat_list, to_group, action_type, pool = undefined) => {
   try {
     const sql_string = `INSERT INTO history (post_link,to_group,to_chat_list, action_type) VALUES ('${post_link}', ${to_group}, ${to_chat_list}, '${action_type}')`
-    await makeDBRequest(sql_string)
+    await makeDBRequest(sql_string, pool)
     console.log(group_id, 'добавлено в историю', post_link, to_chat_list, to_group, action_type)
   } catch (e) {
     console.log(group_id, 'ошибка в add_history.js', e)
   }
 }
 
-export const check_history = async (group_id, post_link, to_chat_list, to_group, action_type) => {
+export const check_history = async (group_id, post_link, to_chat_list, to_group, action_type, pool = undefined) => {
   try {
     const sql_string = `SELECT * FROM history WHERE post_link='${post_link}' AND to_group=${to_group} AND to_chat_list=${to_chat_list} AND action_type ='${action_type}'`
-    let res = await makeDBRequest(sql_string)
+    let res = await makeDBRequest(sql_string, pool)
     console.log(
       group_id,
       'проверена история. Уже была:',
@@ -29,21 +29,21 @@ export const check_history = async (group_id, post_link, to_chat_list, to_group,
   }
 }
 
-export const get_actions = async (group_id, post_type) => {
+export const get_actions = async (group_id, post_type, pool = undefined) => {
   try {
     const sql_string = `SELECT * FROM actions WHERE disable_flag is NULL AND from_group = ${group_id} AND (post_type = '${post_type}' OR post_type = 'all')`
-    let res = await makeDBRequest(sql_string)
-    console.log(group_id, 'Получены действия', res.rowCount)
+    let res = await makeDBRequest(sql_string, pool)
+    console.log(group_id, 'Получены действия в количестве', res.rowCount)
     return res.rows
   } catch (e) {
     console.log(group_id, 'ошибка в get_actions.js', e)
   }
 }
 
-export const get_conf = async (group_id) => {
+export const get_conf = async (group_id, pool = undefined) => {
   try {
     const sql_string = `SELECT * FROM conformation WHERE group_id = ${group_id}`
-    let res = await makeDBRequest(sql_string)
+    let res = await makeDBRequest(sql_string, pool)
     console.log(group_id, 'Получен conformation', res.rows[0].message)
 
     return res.rows[0].message
@@ -52,10 +52,10 @@ export const get_conf = async (group_id) => {
   }
 }
 
-export const update_conf = async (group_id, code) => {
+export const update_conf = async (group_id, code, pool = undefined) => {
   try {
     const sql_string = `UPDATE conformation SET message='${code}' WHERE group_id=${group_id}`
-    await makeDBRequest(sql_string)
+    await makeDBRequest(sql_string, pool)
     console.log(group_id, 'Обновлён confirmation', code)
   } catch (e) {
     console.log(user_id, 'ошибка в update_conf.js', e)

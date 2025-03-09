@@ -1,9 +1,10 @@
 import { API } from 'vk-io'
 import { check_history as was_sent, add_history } from '../f_db/queries.js'
 
-export const send_to_chat = async (post_link, chat_id, action) => {
+export const send_to_chat = async (post_link, chat_id, action, pool = undefined) => {
   try {
-    if (await was_sent(action.from_group, post_link, chat_id, action.to_group, action.action_type)) {
+    const wasSent = await was_sent(action.from_group, post_link, chat_id, action.to_group, action.action_type, pool)
+    if (wasSent) {
       return false
     }
 
@@ -18,7 +19,7 @@ export const send_to_chat = async (post_link, chat_id, action) => {
         group_id: action.to_group,
         attachment: post_link,
       })
-      await add_history(action.from_group, post_link, chat_id, action.to_group, action.action_type)
+      await add_history(action.from_group, post_link, chat_id, action.to_group, action.action_type, pool)
       console.log(action.from_group, 'пост отправлен', post_link, action.to_group, chat_id, res)
       return true
     } catch (error) {

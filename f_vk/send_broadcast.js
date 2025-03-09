@@ -1,9 +1,17 @@
 import axios from 'axios'
 import { check_history as was_sent, add_history } from '../f_db/queries.js'
 
-export const send_broadcast = async (group_id, post_link, action) => {
+export const send_broadcast = async (group_id, post_link, action, pool = undefined) => {
   try {
-    if (await was_sent(action.from_group, post_link, action.to_chat_list, action.to_group, action.action_type)) {
+    const wasSent = await was_sent(
+      action.from_group,
+      post_link,
+      action.to_chat_list,
+      action.to_group,
+      action.action_type,
+      pool
+    )
+    if (wasSent) {
       return false
     }
     const data = JSON.stringify({
@@ -27,7 +35,7 @@ export const send_broadcast = async (group_id, post_link, action) => {
     try {
       let res = await axios(options)
       console.log(group_id, 'рассылка отправлена. Статус', res.status, post_link)
-      await add_history(action.from_group, post_link, action.to_chat_list, action.to_group, action.action_type)
+      await add_history(action.from_group, post_link, action.to_chat_list, action.to_group, action.action_type, pool)
       return true
     } catch (error) {
       console.log(group_id, 'рассылка не отправлена. Статус', error.response.status, post_link)
